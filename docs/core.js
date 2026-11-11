@@ -155,7 +155,7 @@
     const u = String(s).toUpperCase().replace(/\bCTNS?\b/g, "CARTON").replace(/\bPKGS?\b/g, "PACKAGE")
       .replace(/\bPLTS?\b/g, "PALLET");   // MAC-NELS: '2 PLTS'
     for (const w of ["WOODEN CASE", "PALLET", "CARTON", "PACKAGE", "CASE", "BOX", "SET", "DRUM", "ROLL", "BAG", "BALE", "CRATE", "UNIT", "PIECE", "SKID", "BUNDLE"])
-      if (u.includes(w)) return w === "WOODEN CASE" ? "CASE" : w;
+      if (u.includes(w)) return w;   // WOODEN CASE ≠ CASE — ลังไม้กับ CASE ไม่ใช่ชนิดเดียวกัน ต้องแจ้งไม่ตรง
     let m = u.match(/^\s*[\d,]*\s*([A-Z]{2,3})\b/);
     if (m && PKG_KIND[m[1]]) return PKG_KIND[m[1]];
     m = u.match(/\(([A-Z]+?)\(S\)\)/) || u.match(/\(([A-Z ]+?)\)/);
@@ -628,7 +628,7 @@
       mk(["tpE", "tpM"], pkOk);
       if (!pkOk) notes.push(`TOTAL PACKAGE ไม่ตรง (ENTER ${pe !== null ? pe : "-"} / MANIFEST ${pm !== null ? pm : "(ไม่มี)"})`);
       const ke = canonPkg(e.pkgtype), km = canonPkg(m.pkg_hdr);
-      const pgOk = !!(ke && km && (ke === km || km.includes(ke) || ke.includes(km)));
+      const pgOk = !!(ke && km && (ke === km || ((km.includes(ke) || ke.includes(km)) && ke.includes("WOODEN") === km.includes("WOODEN"))));
       mk(["pkE", "pkM"], pgOk);
       if (!pgOk) notes.push(`PACKAGING ไม่ตรง (ENTER ${ke || e.pkgtype || "-"} / MANIFEST ${km || m.pkg_hdr || "(ไม่มี)"})`);
 
